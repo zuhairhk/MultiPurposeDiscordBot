@@ -84,4 +84,4 @@ async def commandlist(ctx):
     '**doja** --> Speaks factual fax only :triumph:\n'
     '**motivation** --> helps motivate you bums\n')
 
-client.run('ODc5MTQ3OTc2ODYwMjcwNTky.YSLgWw.ZWBFpIYUo_MmgwdrE6Ys1-gY4xg')
+client.run('enter token')
