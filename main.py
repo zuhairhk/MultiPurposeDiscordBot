@@ -2,6 +2,9 @@ import discord
 from discord import player
 from discord.ext import commands
 import random
+
+import music
+
 #bot link
 #https://discord.com/api/oauth2/authorize?client_id=879147976860270592&permissions=8&scope=bot
 client = commands.Bot(command_prefix = '.')
@@ -17,6 +20,11 @@ async def join(ctx):
 @client.command()
 async def leave(ctx):
     await ctx.voice_client.disconnect()
+
+cogs = [music]
+
+for i in range(len(cogs)):
+    cogs[i].setup()
 
 @client.command()
 async def create(ctx, *, players):
@@ -84,4 +92,4 @@ async def commandlist(ctx):
     '**doja** --> Speaks factual fax only :triumph:\n'
     '**motivation** --> helps motivate you bums\n')
 
-client.run('ODc5MTQ3OTc2ODYwMjcwNTky.YSLgWw.ZWBFpIYUo_MmgwdrE6Ys1-gY4xg')
+client.run('enter token')
