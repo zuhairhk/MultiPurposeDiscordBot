@@ -188,7 +188,8 @@ async def motivation(ctx):
 @client.command()
 async def commandlist(ctx):
     await ctx.send(f'Use --> . before referencing any command\n'
-    '----------------MUSIC PLAYER COMMANDS----------------\n'
+    '\n'
+    '----------------**MUSIC PLAYER COMMANDS**----------------\n'
     '**join** --> joins vc\n'
     '**leave** --> leaves vc\n'
     '**queue** --> displays song queue\n'
@@ -200,8 +201,8 @@ async def commandlist(ctx):
     '**currenttrack** --> displays current track playing\n'
     '**remove** --> removes song when given index [i.e; remove 2]\n'
     '\n'
-    '\n'
-    '----------------VALORANT PREP COMMANDS----------------\n'
+    #'\n'
+    '----------------**VALORANT PREP COMMANDS**----------------\n'
     '**create** --> creates teams (must input a minimum of 4 players)\n'
     '**map** --> Chooses a random map for you bums\n'
     '**gun** --> Chooses a random gun for you bums\n'
