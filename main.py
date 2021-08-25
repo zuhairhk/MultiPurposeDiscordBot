@@ -1,18 +1,26 @@
 import discord
 from discord import player
+from discord.channel import VoiceChannel
 from discord.ext import commands
 import random
+import youtube_dl
+from discord.flags import Intents
 
-import music
+import DiscordUtils
+#import music
 
 #bot link
 #https://discord.com/api/oauth2/authorize?client_id=879147976860270592&permissions=8&scope=bot
+
 client = commands.Bot(command_prefix = '.')
+
+music = DiscordUtils.Music()
 
 @client.event
 async def on_ready():
     print('Ready!')
 
+'''
 @client.command()
 async def join(ctx):
     channel = ctx.author.voice.channel
@@ -20,11 +28,89 @@ async def join(ctx):
 @client.command()
 async def leave(ctx):
     await ctx.voice_client.disconnect()
+'''
 
+'''
 cogs = [music]
 
 for i in range(len(cogs)):
-    cogs[i].setup()
+    cogs[i].setup(client)
+'''
+
+#---------------- AUDIO PLAYER SOURCECODE -------------------------
+
+@client.command()
+async def join(ctx):
+    voicetrue = ctx.author.voice
+    if voicetrue is None:
+        return await ctx.send('Gaymer cannot join unless you are in a vc :pensive:')
+    await ctx.author.voice.channel.connect()
+    await ctx.send('Joined vc :tired_face:')
+
+@client.command()
+async def leave(ctx):
+    voicetrue = ctx.author.voice
+    mevoicetrue = ctx.guild.me.voice
+    if voicetrue is None:
+        return await ctx.send('Gaymer cannot join unless you are in a vc :pensive:')
+    if mevoicetrue is None:
+        return await ctx.send('I am currently not in a vc :cry:')
+    await ctx.voice_client.disconnect()
+    await ctx.send('Left vc :smirk_cat:')
+
+@client.command()
+async def play(ctx, *, url):
+    player = music.get_player(guild_id = ctx.guild.id)
+    if not player:
+        player = music.create_player(ctx, ffmpeg_error_betterfix=True)
+    if not ctx.voice_client.is_playing():
+        await player.queue(url, search=True)
+        song = await player.play()
+        await ctx.send(f'Currently playing {song.name}')
+    else:
+        song = await player.queue(url, search=True)
+        await ctx.send(f'{song.name} is added to queue :partying_face:')
+
+@client.command()
+async def queue(ctx):
+    player = music.get_player(guild_id = ctx.guild.id)
+    await ctx.send(f"{','.join([song.name for song in player.current_queue()])}")
+
+@client.command()
+async def pause(ctx):
+    player = music.get_player(guild_id = ctx.guild.id)
+    song = await player.pause()
+    await ctx.send(f'Paused {song.name}')
+
+@client.command()
+async def resume(ctx):
+    player = music.get_player(guild_id = ctx.guild.id)
+    song = await player.resume()
+    await ctx.send(f'Resumed {song.name}')
+
+@client.command()
+async def loop(ctx):
+    player = music.get_player(guild_id = ctx.guild.id)
+    song = await player.toggle_song_loop()
+    
+    if song.is_looping:
+        return await ctx.send(f'Currently looping --> {song.name}')
+    else:
+        return await ctx.send(f'{song.name} aint looping :interrobang:')
+
+@client.command()
+async def currenttrack(ctx):
+    player = music.get_player(guild_id = ctx.guild.id)
+    song = player.now_playing()
+    await ctx.send(f'Currently playing --> {song.name}')
+
+@client.command()
+async def remove(ctx, index):
+    player = music.get_player(guild_id = ctx.guild.id)
+    song = await player.remove_from_queue(int(index))
+    await ctx.send(f'Removed {song.name} from queue :face_exhaling:')
+
+#---------------- AUDIO PLAYER SOURCECODE -------------------------
 
 @client.command()
 async def create(ctx, *, players):
