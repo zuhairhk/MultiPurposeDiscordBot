@@ -59,6 +59,11 @@ async def leave(ctx):
     await ctx.send('Left vc :smirk_cat:')
 
 @client.command()
+async def queue(ctx):
+    player = music.get_player(guild_id = ctx.guild.id)
+    await ctx.send(f"{' :point_right: '.join([song.name for song in player.current_queue()])}")
+
+@client.command()
 async def play(ctx, *, url):
     player = music.get_player(guild_id = ctx.guild.id)
     if not player:
@@ -72,11 +77,6 @@ async def play(ctx, *, url):
         await ctx.send(f'{song.name} is added to queue :partying_face:')
 
 @client.command()
-async def queue(ctx):
-    player = music.get_player(guild_id = ctx.guild.id)
-    await ctx.send(f"{','.join([song.name for song in player.current_queue()])}")
-
-@client.command()
 async def pause(ctx):
     player = music.get_player(guild_id = ctx.guild.id)
     song = await player.pause()
@@ -87,6 +87,12 @@ async def resume(ctx):
     player = music.get_player(guild_id = ctx.guild.id)
     song = await player.resume()
     await ctx.send(f'Resumed {song.name}')
+
+@client.command()
+async def skip(ctx):
+    player = music.get_player(guild_id = ctx.guild.id)
+    song = await player.remove_from_queue(0)
+    await ctx.send(f'Skipped {song.name} :face_exhaling:')
 
 @client.command()
 async def loop(ctx):
@@ -162,16 +168,41 @@ async def agent(ctx):
 async def doja(ctx):
     await ctx.send('Doja cat the best female artist of all time :tired_face:')
 
+'''
 @client.command()
 async def motivation(ctx):
     await ctx.send('https://www.youtube.com/watch?v=tYzMYcUty6s&ab_channel=TeamPsycosmos')
+'''
+
+@client.command()
+async def motivation(ctx):
+    url = 'https://www.youtube.com/watch?v=tYzMYcUty6s&ab_channel=TeamPsycosmos'
+    player = music.get_player(guild_id = ctx.guild.id)
+    if not player:
+        player = music.create_player(ctx, ffmpeg_error_betterfix=True)
+    if not ctx.voice_client.is_playing():
+        await player.queue(url, search=True)
+        song = await player.play()
+        await ctx.send('GET MOTIVATED')
 
 @client.command()
 async def commandlist(ctx):
     await ctx.send(f'Use --> . before referencing any command\n'
+    '----------------MUSIC PLAYER COMMANDS----------------\n'
     '**join** --> joins vc\n'
     '**leave** --> leaves vc\n'
-    '**create** --> creates teams of (must input a minimum of 4 players)\n'
+    '**queue** --> displays song queue\n'
+    '**play** --> plays song\n'
+    '**pause** --> pauses song\n'
+    '**resume** --> resumes song\n'
+    '**skip** --> skips current song\n'
+    '**loop** --> loops current song\n'
+    '**currenttrack** --> displays current track playing\n'
+    '**remove** --> removes song when given index [i.e; remove 2]\n'
+    '\n'
+    '\n'
+    '----------------VALORANT PREP COMMANDS----------------\n'
+    '**create** --> creates teams (must input a minimum of 4 players)\n'
     '**map** --> Chooses a random map for you bums\n'
     '**gun** --> Chooses a random gun for you bums\n'
     '**agent** --> Assigns a random agent to you bums\n'
